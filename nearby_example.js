@@ -12,7 +12,8 @@ console.log('begin')
 GooglePlaces.nearbySearch(latitude, longitude)
   .then(response => {
     console.log("--- ok ---")
-    console.log(response)
+    const [first] = response
+    console.log(first)
   }).catch(message => {
     console.log("--- error ---")
     console.log(message)
