@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-google_maps.html">google_maps</a><ul class='methods'><li data-type='method'><a href="module-google_maps.html#.getRequest">getRequest</a></li><li data-type='method'><a href="module-google_maps.html#~buildUrl">buildUrl</a></li></ul></li><li><a href="module-google_place.html">google_place</a><ul class='methods'><li data-type='method'><a href="module-google_place.html#.nearbySearch">nearbySearch</a></li><li data-type='method'><a href="module-google_place.html#~assignObject">assignObject</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-google_maps.html">google_maps</a><ul class='methods'><li data-type='method'><a href="module-google_maps.html#.getRequest">getRequest</a></li><li data-type='method'><a href="module-google_maps.html#~buildUrl">buildUrl</a></li><li data-type='method'><a href="module-google_maps.html#~getGoogleMapsApiKey">getGoogleMapsApiKey</a></li></ul></li><li><a href="module-google_place.html">google_place</a><ul class='methods'><li data-type='method'><a href="module-google_place.html#.nearbySearch">nearbySearch</a></li><li data-type='method'><a href="module-google_place.html#~assignObject">assignObject</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -41,7 +41,7 @@
             <pre class="prettyprint source linenums"><code>/**
  * @file Provides a interface to Google Place API.
  * @module google_place
- * @author Salva Ruiz &lt;salva@salvaruiz.me>
+ * @author Salva Ruiz
  * @license MIT License
  */
 
@@ -51,7 +51,7 @@
  */
 const googlePlaceNearbySearchEndpoint = "/maps/api/place/nearbysearch/json";
 
-import * as GoogleMaps from "./google_maps.js";
+import { getRequest as googleMapsGetRequest } from "./google_maps.js";
 
 /**
  * Reject the unused keys of an object.
@@ -79,7 +79,6 @@ function assignObject(place) {
     "url",
   ];
 
-  // TODO: use the [...obj1, ...obj2] format
   return keys.reduce((acc, key) => {
     acc[key] = place[key] || null;
     return acc;
@@ -95,13 +94,12 @@ function assignObject(place) {
  * @return {Object[]} An array of Google Place objects.
  * @throws {AbortError|TypeError|Response}
  */
-export function nearbySearch(latitude, longitude, apiKey) {
-  return GoogleMaps.getRequest(googlePlaceNearbySearchEndpoint, {
+export function nearbySearch(latitude, longitude) {
+  return googleMapsGetRequest(googlePlaceNearbySearchEndpoint, {
     location: `${latitude},${longitude}`,
     type: "restaurant",
     rankby: "distance",
     language: "es",
-    key: apiKey,
   }).then((result) => {
     if (result.status == "OK") {
       return result.results
@@ -120,6 +118,15 @@ export function nearbySearch(latitude, longitude, apiKey) {
     }
   });
 }
+
+/*
+ * For testing only.
+ */
+export {
+  googlePlaceNearbySearchEndpoint as test_googlePlaceNearbySearchEndpoint,
+  assignObject as test_assignObject,
+  nearbySearch as test_nearbySearch
+};
 </code></pre>
         </article>
     </section>
@@ -132,7 +139,7 @@ export function nearbySearch(latitude, longitude, apiKey) {
 <br class="clear">
 
 <footer>
-    Documentation generated at Wed Aug 24 2022 13:56:59 GMT+0200 (hora de verano de Europa central)
+    Documentation generated at Wed Aug 24 2022 21:28:06 GMT+0200 (hora de verano de Europa central)
 </footer>
 
 <script>prettyPrint();</script>

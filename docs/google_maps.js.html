@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-google_maps.html">google_maps</a><ul class='methods'><li data-type='method'><a href="module-google_maps.html#.getRequest">getRequest</a></li><li data-type='method'><a href="module-google_maps.html#~buildUrl">buildUrl</a></li></ul></li><li><a href="module-google_place.html">google_place</a><ul class='methods'><li data-type='method'><a href="module-google_place.html#.nearbySearch">nearbySearch</a></li><li data-type='method'><a href="module-google_place.html#~assignObject">assignObject</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-google_maps.html">google_maps</a><ul class='methods'><li data-type='method'><a href="module-google_maps.html#.getRequest">getRequest</a></li><li data-type='method'><a href="module-google_maps.html#~buildUrl">buildUrl</a></li><li data-type='method'><a href="module-google_maps.html#~getGoogleMapsApiKey">getGoogleMapsApiKey</a></li></ul></li><li><a href="module-google_place.html">google_place</a><ul class='methods'><li data-type='method'><a href="module-google_place.html#.nearbySearch">nearbySearch</a></li><li data-type='method'><a href="module-google_place.html#~assignObject">assignObject</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -41,9 +41,11 @@
             <pre class="prettyprint source linenums"><code>/**
  * @file Provides a interface to Google Maps API.
  * @module google_maps
- * @author Salva Ruiz &lt;salva@salvaruiz.me>
+ * @author Salva Ruiz
  * @license MIT License
  */
+
+import { configSync } from "https://deno.land/std@0.152.0/dotenv/mod.ts";
 
 /**
  * @constant {string}
@@ -52,8 +54,17 @@
 const googleMapsApiUrl = "https://maps.googleapis.com";
 
 /**
- * Build a URL string concatenating the Google Maps API URL, the API endpoint
- * and the query string.
+ * Get the Google Maps private API key from the .env file.
+ *
+ * @return {string} The API Key.
+ */
+function getGoogleMapsApiKey() {
+  return configSync().GOOGLE_MAPS_API_KEY;
+}
+
+/**
+ * Build a URL string combining the Google Maps API URL, the API endpoint and
+ * the request params.
  *
  * @example
  * buildUrl("/maps/api/place/nearbysearch/json", {
@@ -69,12 +80,11 @@ const googleMapsApiUrl = "https://maps.googleapis.com";
  * @return {string} The built URL string.
  */
 function buildUrl(googleMapsEndpoint, params) {
-  return [
-    googleMapsApiUrl,
-    googleMapsEndpoint,
-    "?",
-    new URLSearchParams(params).toString(),
-  ].join("");
+  const url = new URL(googleMapsEndpoint, googleMapsApiUrl);
+  const queryString = new URLSearchParams(params);
+  queryString.append("key", getGoogleMapsApiKey());
+  url.search = queryString;
+  return url.href;
 }
 
 /**
@@ -97,6 +107,15 @@ export function getRequest(googleMapsEndpoint, params) {
       }
     });
 }
+
+/*
+ * For testing only.
+ */
+export {
+  googleMapsApiUrl as test_googleMapsApiUrl,
+  getGoogleMapsApiKey as test_getGoogleMapsApiKey,
+  buildUrl as test_buildUrl
+};
 </code></pre>
         </article>
     </section>
@@ -109,7 +128,7 @@ export function getRequest(googleMapsEndpoint, params) {
 <br class="clear">
 
 <footer>
-    Documentation generated at Wed Aug 24 2022 13:56:59 GMT+0200 (hora de verano de Europa central)
+    Documentation generated at Wed Aug 24 2022 21:28:06 GMT+0200 (hora de verano de Europa central)
 </footer>
 
 <script>prettyPrint();</script>
