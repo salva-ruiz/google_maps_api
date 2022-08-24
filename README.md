@@ -28,8 +28,8 @@ deno run -A example.js
 
 ## Documentation
 
-You can see additional documentation as well as the syntax of the functions used in the *docs/index.html* file. If you would like to regenerate the documentation, you can do so with the command:
+You can see additional documentation as well as the syntax of the functions used in the *docs/index.html* file. If you would like to regenerate the documentation, you can create a *.jsdoc.json* file and run the command:
 
 ```shell
-jsdoc -c .jsdoc.json
+deno doc -c .jsdoc.json # or also jsdoc -c .jsdoc.json
 ```
