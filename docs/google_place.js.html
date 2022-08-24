@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>google_place.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-google_maps.html">google_maps</a><ul class='methods'><li data-type='method'><a href="module-google_maps.html#.getRequest">getRequest</a></li><li data-type='method'><a href="module-google_maps.html#~buildUrl">buildUrl</a></li></ul></li><li><a href="module-google_place.html">google_place</a><ul class='methods'><li data-type='method'><a href="module-google_place.html#.nearbySearch">nearbySearch</a></li><li data-type='method'><a href="module-google_place.html#~assignObject">assignObject</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">google_place.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Provides a interface to Google Place API.
+ * @module google_place
+ * @author Salva Ruiz &lt;salva@salvaruiz.me>
+ * @license MIT License
+ */
+
+/**
+ * @constant {string}
+ * @default
+ */
+const googlePlaceNearbySearchEndpoint = "/maps/api/place/nearbysearch/json";
+
+import * as GoogleMaps from "./google_maps.js";
+
+/**
+ * Reject the unused keys of an object.
+ *
+ * @param {Object} place A Google Place object.
+ * @return {Object} The resulting object.
+ */
+function assignObject(place) {
+  const keys = [
+    "place_id",
+    "name",
+    "latitude",
+    "longitude",
+    "formatted_address",
+    "address_components",
+    "vicinity",
+    "photos",
+    "formatted_phone_number",
+    "international_phone_number",
+    "opening_hours",
+    "price_level",
+    "rating",
+    "user_ratings_total",
+    "website",
+    "url",
+  ];
+
+  // TODO: use the [...obj1, ...obj2] format
+  return keys.reduce((acc, key) => {
+    acc[key] = place[key] || null;
+    return acc;
+  }, {});
+}
+
+/**
+ * Search operational restaurants in Google Places nearby a GPS location.
+ *
+ * @param {number} latitude The GPS latitude coordinate.
+ * @param {number} longitude The GPS longitude coordinate.
+ * @param {string} apiKey The Google Maps private API key.
+ * @return {Object[]} An array of Google Place objects.
+ * @throws {AbortError|TypeError|Response}
+ */
+export function nearbySearch(latitude, longitude, apiKey) {
+  return GoogleMaps.getRequest(googlePlaceNearbySearchEndpoint, {
+    location: `${latitude},${longitude}`,
+    type: "restaurant",
+    rankby: "distance",
+    language: "es",
+    key: apiKey,
+  }).then((result) => {
+    if (result.status == "OK") {
+      return result.results
+        .filter((place) => place.business_status != "CLOSED_PERMANENTLY")
+        .map((place) => {
+          if ("geometry" in place) {
+            place.latitude = parseFloat(place.geometry.location.lat.toFixed(6));
+            place.longitude = parseFloat(
+              place.geometry.location.lng.toFixed(6),
+            );
+          }
+          return assignObject(place);
+        });
+    } else {
+      throw result;
+    }
+  });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated at Wed Aug 24 2022 13:56:59 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

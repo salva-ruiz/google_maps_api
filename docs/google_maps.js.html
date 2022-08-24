@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>google_maps.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-google_maps.html">google_maps</a><ul class='methods'><li data-type='method'><a href="module-google_maps.html#.getRequest">getRequest</a></li><li data-type='method'><a href="module-google_maps.html#~buildUrl">buildUrl</a></li></ul></li><li><a href="module-google_place.html">google_place</a><ul class='methods'><li data-type='method'><a href="module-google_place.html#.nearbySearch">nearbySearch</a></li><li data-type='method'><a href="module-google_place.html#~assignObject">assignObject</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">google_maps.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @file Provides a interface to Google Maps API.
+ * @module google_maps
+ * @author Salva Ruiz &lt;salva@salvaruiz.me>
+ * @license MIT License
+ */
+
+/**
+ * @constant {string}
+ * @default
+ */
+const googleMapsApiUrl = "https://maps.googleapis.com";
+
+/**
+ * Build a URL string concatenating the Google Maps API URL, the API endpoint
+ * and the query string.
+ *
+ * @example
+ * buildUrl("/maps/api/place/nearbysearch/json", {
+ *   location: "36.721347,-4.420142"
+ *   type: "restaurant",
+ *   rankby: "distance",
+ *   language: "es",
+ *   key: "1234"});
+ * // "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=36.721347%2C-4.420142&amp;type=restaurant&amp;rankby=distance&amp;language=es&amp;key=1234"
+ *
+ * @param {string} googleMapsEndpoint The Google Maps API endpoint.
+ * @param {Object} params The query in the form of `{param: value, ...}`.
+ * @return {string} The built URL string.
+ */
+function buildUrl(googleMapsEndpoint, params) {
+  return [
+    googleMapsApiUrl,
+    googleMapsEndpoint,
+    "?",
+    new URLSearchParams(params).toString(),
+  ].join("");
+}
+
+/**
+ * Makes a HTTP GET request to Google Maps API.
+ *
+ * @param {string} googleMapsEndpoint The Google Maps API endpoint.
+ * @param {Object} params The query in the form of `{param: value, ...}`.
+ * @return {Promise} The Google Maps API response.
+ * @throws {AbortError|TypeError|Response} The fetch exceptions.
+ */
+export function getRequest(googleMapsEndpoint, params) {
+  const url = buildUrl(googleMapsEndpoint, params);
+
+  return fetch(url)
+    .then((response) => {
+      if (response.ok &amp;&amp; response.status == 200) {
+        return response.json();
+      } else {
+        throw response;
+      }
+    });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated at Wed Aug 24 2022 13:56:59 GMT+0200 (hora de verano de Europa central)
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
